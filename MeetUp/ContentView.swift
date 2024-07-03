@@ -10,9 +10,6 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var processedImage: Image?
-    @State private var selectedItem: PhotosPickerItem?
-    @State private var allPeople = [Person]()
     @State private var name: String = ""
     @State private var beginImage: CIImage?
     
@@ -21,23 +18,23 @@ struct ContentView: View {
     @State private var viewModel = ViewModel()
     
     var body: some View {
-        if allPeople.isEmpty {
+        if viewModel.allPeople.isEmpty {
             VStack {
-                PhotosPicker(selection: $selectedItem) {
-                    if let processedImage {
-                            processedImage
+                PhotosPicker(selection: $viewModel.selectedItem) {
+                    if let picture = viewModel.processedImage {
+                            picture
                                 .resizable()
                                 .scaledToFit()
                     } else {
                         ContentUnavailableView("No Pictures Yet", systemImage: "photo.badge.plus", description: Text("Tap to add your first picture"))
                     }
                 }
-                .onChange(of: selectedItem) {
+                .onChange(of: viewModel.selectedItem) {
                     Task {
-                        processedImage = try await selectedItem?.loadTransferable(type: Image.self)
+                        viewModel.processedImage = try await viewModel.selectedItem?.loadTransferable(type: Image.self)
                     }
                 }
-                if processedImage != nil {
+                if viewModel.processedImage != nil {
                     VStack {
                         TextField("Person's Name", text: $name)
                             .keyboardType(.default)
@@ -54,7 +51,7 @@ struct ContentView: View {
             .padding()
         } else {
             List {
-                ForEach(allPeople, id: \.id) { item in
+                ForEach(viewModel.allPeople, id: \.id) { item in
                     // TODO: More Code Later
                 }
             }
