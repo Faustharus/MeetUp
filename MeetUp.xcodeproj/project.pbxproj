@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E29214C2C36F3A40053C48B /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E29214B2C36F3A40053C48B /* EditView.swift */; };
+		9E29214E2C36FB350053C48B /* EditView-ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E29214D2C36FB350053C48B /* EditView-ViewModel.swift */; };
 		9EA9E2842C353F6D005D4D2E /* ContentView-ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA9E2832C353F6D005D4D2E /* ContentView-ViewModel.swift */; };
 		9EBA9AF52C332AA400D4FBF4 /* MeetUpApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBA9AF42C332AA400D4FBF4 /* MeetUpApp.swift */; };
 		9EBA9AF72C332AA400D4FBF4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBA9AF62C332AA400D4FBF4 /* ContentView.swift */; };
@@ -16,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9E29214B2C36F3A40053C48B /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		9E29214D2C36FB350053C48B /* EditView-ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditView-ViewModel.swift"; sourceTree = "<group>"; };
 		9EA9E2832C353F6D005D4D2E /* ContentView-ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-ViewModel.swift"; sourceTree = "<group>"; };
 		9EBA9AF12C332AA400D4FBF4 /* MeetUp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeetUp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EBA9AF42C332AA400D4FBF4 /* MeetUpApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetUpApp.swift; sourceTree = "<group>"; };
@@ -58,6 +62,8 @@
 				9EBA9AF42C332AA400D4FBF4 /* MeetUpApp.swift */,
 				9EBA9AF62C332AA400D4FBF4 /* ContentView.swift */,
 				9EA9E2832C353F6D005D4D2E /* ContentView-ViewModel.swift */,
+				9E29214B2C36F3A40053C48B /* EditView.swift */,
+				9E29214D2C36FB350053C48B /* EditView-ViewModel.swift */,
 				9EBA9B022C33315700D4FBF4 /* Person.swift */,
 				9EBA9AF82C332AA500D4FBF4 /* Assets.xcassets */,
 				9EBA9AFA2C332AA500D4FBF4 /* Preview Content */,
@@ -144,9 +150,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EBA9B032C33315700D4FBF4 /* Person.swift in Sources */,
+				9E29214C2C36F3A40053C48B /* EditView.swift in Sources */,
 				9EA9E2842C353F6D005D4D2E /* ContentView-ViewModel.swift in Sources */,
 				9EBA9AF72C332AA400D4FBF4 /* ContentView.swift in Sources */,
 				9EBA9AF52C332AA400D4FBF4 /* MeetUpApp.swift in Sources */,
+				9E29214E2C36FB350053C48B /* EditView-ViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

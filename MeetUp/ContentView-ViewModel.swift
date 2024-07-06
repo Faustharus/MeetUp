@@ -5,6 +5,8 @@
 //  Created by Damien Chailloleau on 03/07/2024.
 //
 
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import PhotosUI
 import SwiftUI
 
@@ -13,7 +15,14 @@ extension ContentView {
     class ViewModel {
         var processedImage: Image?
         var selectedItem: PhotosPickerItem?
+        
+        var name: String = ""
         var allPeople = [Person]()
+        var people: Person?
+        
+        var beginImage: CIImage?
+        var currentFilter: CIFilter = CIFilter.sepiaTone()
+        let context = CIContext()
         
         let savePeople = URL.documentsDirectory.appending(path: "savedPeople")
         
@@ -35,11 +44,35 @@ extension ContentView {
             }
         }
         
-        func addNewPerson(person: Person) {
+        func loadImage() {
             Task {
                 guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
-                let newPerson = Person(name: "New Person", picture: imageData)
+                guard let inputImage = UIImage(data: imageData) else { return }
+                beginImage = CIImage(image: inputImage)
+                if let beginImage {
+                    guard let cgImage = context.createCGImage(beginImage, from: beginImage.extent) else { return }
+                    let uiImage = UIImage(cgImage: cgImage)
+                    processedImage = Image(uiImage: uiImage)
+                }
             }
+        }
+        
+        func addNewPerson(_ name: String) async {
+            let imageData = try? await selectedItem?.loadTransferable(type: Data.self)
+            
+            let newPerson = Person(name: name, picture: imageData)
+            allPeople.append(newPerson)
+            save()
+            
+//            Task {
+//                guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
+//                let newPerson = Person(name: "New Person", picture: imageData)
+//            }
+        }
+        
+        func imageFromData(_ data: Data?) -> Image? {
+            guard let data = data, let uiImage = UIImage(data: data) else { return nil }
+            return Image(uiImage: uiImage)
         }
     }
 }
