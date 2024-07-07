@@ -6,7 +6,6 @@
 //
 
 import CoreImage
-import CoreImage.CIFilterBuiltins
 import PhotosUI
 import SwiftUI
 
@@ -21,7 +20,6 @@ extension ContentView {
         var people: Person?
         
         var beginImage: CIImage?
-        var currentFilter: CIFilter = CIFilter.sepiaTone()
         let context = CIContext()
         
         let savePeople = URL.documentsDirectory.appending(path: "savedPeople")
@@ -63,16 +61,15 @@ extension ContentView {
             let newPerson = Person(name: name, picture: imageData)
             allPeople.append(newPerson)
             save()
-            
-//            Task {
-//                guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
-//                let newPerson = Person(name: "New Person", picture: imageData)
-//            }
         }
         
         func imageFromData(_ data: Data?) -> Image? {
             guard let data = data, let uiImage = UIImage(data: data) else { return nil }
             return Image(uiImage: uiImage)
+        }
+        
+        func deletePerson(at offsets: IndexSet) {
+            allPeople.remove(atOffsets: offsets)
         }
     }
 }
