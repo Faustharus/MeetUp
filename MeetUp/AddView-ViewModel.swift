@@ -16,15 +16,39 @@ extension AddView {
         var selectedItem: PhotosPickerItem?
         
         var name: String = ""
-        var people: Person?
+        var people: Person
         
         var beginImage: CIImage?
         let context = CIContext()
         
-        let savePeople = URL.documentsDirectory.appending(path: "savedPeople")
+        let savePeople = SavedPersons.savePeople
         
-        init() {
+        init(person: Person) {
+            self.people = person
             
+            name = person.name
+        }
+        
+        func createNew() async -> Person {
+            let imageData = try? await selectedItem?.loadTransferable(type: Data.self)
+            
+            var newPerson = people
+            newPerson.name = name
+            newPerson.picture = imageData
+            return newPerson
+        }
+        
+        func loadImage() {
+            Task {
+                guard let imageData = try await selectedItem?.loadTransferable(type: Data.self) else { return }
+                guard let inputImage = UIImage(data: imageData) else { return }
+                beginImage = CIImage(image: inputImage)
+                if let beginImage {
+                    guard let cgImage = context.createCGImage(beginImage, from: beginImage.extent) else { return }
+                    let uiImage = UIImage(cgImage: cgImage)
+                    processedImage = Image(uiImage: uiImage)
+                }
+            }
         }
     }
 }

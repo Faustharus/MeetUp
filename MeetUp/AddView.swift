@@ -17,13 +17,22 @@ struct AddView: View {
     @State private var processedImage: Image?
     @FocusState var isInputValid: Bool
     
+    @State private var viewModel: ViewModel
+    
+    var onSave: (Person) -> Void
+    
+    init(person: Person, onSave: @escaping (Person) -> Void) {
+        self.onSave = onSave
+        _viewModel = State(initialValue: ViewModel(person: person))
+    }
+    
     var body: some View {
         VStack {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(.black, lineWidth: 3)
                 VStack {
-                    TextField("Person's Name", text: $name)
+                    TextField("Person's Name", text: $viewModel.name)
                         .keyboardType(.default)
                         .focused($isInputValid)
                         .toolbar {
@@ -37,7 +46,7 @@ struct AddView: View {
                                 Spacer()
                                 
                                 Button {
-                                    self.name = ""
+                                    self.viewModel.name = ""
                                 } label: {
                                     Label("Reset", systemImage: "eraser.line.dashed")
                                 }
@@ -48,8 +57,8 @@ struct AddView: View {
             }
             .frame(width: 300, height: 55)
             
-            PhotosPicker(selection: $selectedItem) {
-                if let picture = processedImage {
+            PhotosPicker(selection: $viewModel.selectedItem) {
+                if let picture = viewModel.processedImage {
                     picture
                         .resizable()
                         .scaledToFit()
@@ -61,14 +70,16 @@ struct AddView: View {
                         .frame(width: 400, height: 200)
                 }
             }
-            .onChange(of: selectedItem) {
-                Task {
-                    processedImage = try await selectedItem?.loadTransferable(type: Image.self)
-                }
-            }
+            .onChange(of: viewModel.selectedItem, viewModel.loadImage)
             
             Button("Save") {
                 // TODO: More Code to Come
+                Task {
+                    let newPerson = await viewModel.createNew()
+                    onSave(newPerson)
+                    dismiss()
+                }
+                
             }
             .buttonStyle(.borderedProminent)
         }
@@ -76,5 +87,5 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView()
+    AddView(person: .example) { _ in }
 }

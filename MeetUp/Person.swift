@@ -15,4 +15,8 @@ struct Person: Identifiable, Codable, Comparable {
     static func <(lhs: Person, rhs: Person) -> Bool {
         return lhs.name < rhs.name
     }
+    
+    #if DEBUG
+    static let example = Person(name: "Jane Doe")
+    #endif
 }

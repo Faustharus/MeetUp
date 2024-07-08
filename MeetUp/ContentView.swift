@@ -95,7 +95,9 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $isOpen) {
-                    AddView()
+                    AddView(person: viewModel.people!) { person in
+                        
+                    }
                 }
             }
         }
