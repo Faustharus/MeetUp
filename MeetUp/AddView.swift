@@ -21,9 +21,9 @@ struct AddView: View {
     
     var onSave: (Person) -> Void
     
-    init(person: Person, onSave: @escaping (Person) -> Void) {
+    init(onSave: @escaping (Person) -> Void) {
         self.onSave = onSave
-        _viewModel = State(initialValue: ViewModel(person: person))
+        _viewModel = State(initialValue: ViewModel())
     }
     
     var body: some View {
@@ -73,7 +73,6 @@ struct AddView: View {
             .onChange(of: viewModel.selectedItem, viewModel.loadImage)
             
             Button("Save") {
-                // TODO: More Code to Come
                 Task {
                     let newPerson = await viewModel.createNew()
                     onSave(newPerson)
@@ -87,5 +86,5 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView(person: .example) { _ in }
+    AddView(onSave: { _ in })
 }
