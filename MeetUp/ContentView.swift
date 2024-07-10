@@ -24,7 +24,7 @@ struct ContentView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .frame(width: 400, height: 200)
+                                .frame(width: (UIScreen.current?.bounds.width)! * 0.5, height: (UIScreen.current?.bounds.height)! * 0.2)
                                 .padding()
                         } else {
                             ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap to insert your first photo"))
@@ -65,21 +65,27 @@ struct ContentView: View {
                 .navigationTitle("MeetUp")
             } else {
                 List {
-                    ForEach(viewModel.allPeople, id: \.id) { person in
-                        HStack {
-                            if let image = viewModel.imageFromData(person.picture) {
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 75)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    ForEach(viewModel.allPeople.sorted(), id: \.id) { person in
+                        NavigationLink(value: person) {
+                            HStack {
+                                if let image = viewModel.imageFromData(person.picture) {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 75)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                }
+                                Text("\(person.name)")
                             }
-                            Text("\(person.name)")
                         }
+                        
                     }
                     .onDelete(perform: viewModel.deletePerson)
                 }
                 .navigationTitle("MeetUp")
+                .navigationDestination(for: Person.self, destination: { person in
+                    DetailView(person: person)
+                })
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {

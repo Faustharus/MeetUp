@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Person: Identifiable, Codable, Comparable {
+struct Person: Identifiable, Codable, Comparable, Hashable {
     var id = UUID()
     var name: String
     var picture: Data?
