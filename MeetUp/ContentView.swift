@@ -24,7 +24,7 @@ struct ContentView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .frame(width: (UIScreen.current?.bounds.width)! * 0.5, height: (UIScreen.current?.bounds.height)! * 0.2)
+                                .frame(width: 300, height: 100)
                                 .padding()
                         } else {
                             ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap to insert your first photo"))
@@ -34,33 +34,46 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    if viewModel.processedImage != nil {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(.black, lineWidth: 2.5)
-                            VStack {
-                                TextField("Person's Name", text: $viewModel.name)
-                                    .keyboardType(.default)
-                                    .padding(.horizontal)
+                    VStack {
+                        if viewModel.processedImage != nil {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(.black, lineWidth: 2.5)
+                                VStack {
+                                    TextField("Person's Name", text: $viewModel.name)
+                                        .keyboardType(.default)
+                                        .padding(.horizontal)
+                                }
+                            }
+                            .frame(width: 300, height: 55)
+                            
+                            Button {
+                                Task {
+                                    await viewModel.addNewPerson(viewModel.name)
+                                }
+                            } label: {
+                                Text("Save")
+                                    .font(.title.bold())
+                                    .foregroundStyle(.white)
+                                    .frame(width: 300, height: 55)
+                                    .background(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3 ? Color.gray.gradient : Color.blue.gradient)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                            .disabled(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3)
+                            
+                            Button {
+                                viewModel.cancelAdd()
+                            } label: {
+                                Text("Cancel")
+                                    .font(.title.bold())
+                                    .foregroundStyle(.white)
+                                    .frame(width: 300, height: 55)
+                                    .background(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3 ? Color.gray.gradient : Color.red.gradient)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
                             }
                         }
-                        .frame(width: 300, height: 55)
-                        
-                        Button {
-                            Task {
-                                await viewModel.addNewPerson(viewModel.name)
-                            }
-                        } label: {
-                            Text("Save")
-                                .font(.title.bold())
-                                .foregroundStyle(.white)
-                                .frame(width: 300, height: 55)
-                                .background(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3 ? Color.gray.gradient : Color.blue.gradient)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                        .disabled(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3)
                     }
-                    
+                    //.frame(width: (UIScreen.current?.bounds.width)! * 0.9, height: (UIScreen.current?.bounds.height)! * 0.05)
                 }
                 .navigationTitle("MeetUp")
             } else {

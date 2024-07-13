@@ -63,6 +63,12 @@ extension ContentView {
             save()
         }
         
+        func cancelAdd() {
+            selectedItem = nil
+            processedImage = nil
+            name = ""
+        }
+        
         func imageFromData(_ data: Data?) -> Image? {
             guard let data = data, let uiImage = UIImage(data: data) else { return nil }
             return Image(uiImage: uiImage)

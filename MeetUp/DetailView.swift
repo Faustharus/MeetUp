@@ -5,11 +5,14 @@
 //  Created by Damien Chailloleau on 10/07/2024.
 //
 
+import MapKit
 import SwiftUI
 
 struct DetailView: View {
     
     @State private var viewModel = ViewModel()
+    
+    @State private var isMapOpen: Bool = false
     
     let person: Person
     
@@ -20,7 +23,7 @@ struct DetailView: View {
                     .resizable()
                     .scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .frame(width: 400, height: 200)
+                    .frame(width: (UIScreen.current?.bounds.width)! * 0.8)
                     .padding()
             } else {
                 ContentUnavailableView("No Picture", systemImage: "photo.on.rectangle.angled", description: Text("There is no picture to match to the name"))
@@ -29,6 +32,14 @@ struct DetailView: View {
                
             Text(person.name)
                 .font(.title.bold().italic())
+            
+            Button("Open Map") {
+                self.isMapOpen = true
+            }
+            .buttonStyle(.bordered)
+        }
+        .sheet(isPresented: $isMapOpen) {
+            Map() // <= Bad Method because of inability to dismiss the Map manually & can't add a dismiss
         }
     }
 }
