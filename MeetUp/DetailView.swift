@@ -23,7 +23,7 @@ struct DetailView: View {
                     .resizable()
                     .scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .frame(width: (UIScreen.current?.bounds.width)! * 0.8)
+                    .frame(width: UIScreen.current!.bounds.width * 0.8)
                     .padding()
             } else {
                 ContentUnavailableView("No Picture", systemImage: "photo.on.rectangle.angled", description: Text("There is no picture to match to the name"))
@@ -39,7 +39,7 @@ struct DetailView: View {
             .buttonStyle(.bordered)
         }
         .sheet(isPresented: $isMapOpen) {
-            Map() // <= Bad Method because of inability to dismiss the Map manually & can't add a dismiss
+            MapLocationView(locationTest: person)
         }
     }
 }

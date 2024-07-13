@@ -14,6 +14,8 @@ struct ContentView: View {
     
     @State private var isOpen: Bool = false
     
+    let locationFetcher = LocationFetcher()
+    
     var body: some View {
         NavigationStack {
             if viewModel.allPeople.isEmpty {
@@ -49,7 +51,9 @@ struct ContentView: View {
                             
                             Button {
                                 Task {
-                                    await viewModel.addNewPerson(viewModel.name)
+                                    if let location = locationFetcher.lastKnownLocation {
+                                        await viewModel.addNewPerson(viewModel.name, point: location)
+                                    }
                                 }
                             } label: {
                                 Text("Save")
@@ -76,6 +80,13 @@ struct ContentView: View {
                     //.frame(width: (UIScreen.current?.bounds.width)! * 0.9, height: (UIScreen.current?.bounds.height)! * 0.05)
                 }
                 .navigationTitle("MeetUp")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Start Tracking Location") {
+                            locationFetcher.start()
+                        }
+                    }
+                }
             } else {
                 List {
                     ForEach(viewModel.allPeople.sorted(), id: \.id) { person in
@@ -105,6 +116,12 @@ struct ContentView: View {
                             self.isOpen = true
                         } label: {
                             Label("Add", systemImage: "plus")
+                        }
+                        
+                        Spacer()
+                        
+                        Button("Start Tracking Location") {
+                            locationFetcher.start()
                         }
                     }
                     

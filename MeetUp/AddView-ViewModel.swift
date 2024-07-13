@@ -22,10 +22,9 @@ extension AddView {
         
         let savePeople = SavedPersons.savePeople
 
-        
         func createNew() async -> Person {
             let imageData = try? await selectedItem?.loadTransferable(type: Data.self)
-            let newPerson = Person(name: name, picture: imageData)
+            let newPerson = Person(name: name, picture: imageData, latitude: 0.0, longitude: 0.0)
             return newPerson
         }
         

@@ -55,10 +55,10 @@ extension ContentView {
             }
         }
         
-        func addNewPerson(_ name: String) async {
+        func addNewPerson(_ name: String, point: CLLocationCoordinate2D) async {
             let imageData = try? await selectedItem?.loadTransferable(type: Data.self)
             
-            let newPerson = Person(name: name, picture: imageData)
+            let newPerson = Person(name: name, picture: imageData, latitude: point.latitude, longitude: point.longitude)
             allPeople.append(newPerson)
             save()
         }
