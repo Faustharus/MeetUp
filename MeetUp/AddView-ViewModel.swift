@@ -22,9 +22,9 @@ extension AddView {
         
         let savePeople = SavedPersons.savePeople
 
-        func createNew() async -> Person {
+        func createNew(point: CLLocationCoordinate2D) async -> Person {
             let imageData = try? await selectedItem?.loadTransferable(type: Data.self)
-            let newPerson = Person(name: name, picture: imageData, latitude: 0.0, longitude: 0.0)
+            let newPerson = Person(name: name, picture: imageData, latitude: point.latitude, longitude: point.longitude)
             return newPerson
         }
         

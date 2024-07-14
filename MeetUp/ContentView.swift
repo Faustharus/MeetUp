@@ -77,7 +77,7 @@ struct ContentView: View {
                             }
                         }
                     }
-                    //.frame(width: (UIScreen.current?.bounds.width)! * 0.9, height: (UIScreen.current?.bounds.height)! * 0.05)
+                    //.frame(width: UIScreen.current!.bounds.width * 0.9, height: UIScreen.current!.bounds.height * 0.05)
                 }
                 .navigationTitle("MeetUp")
                 .toolbar {

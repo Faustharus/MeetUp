@@ -74,7 +74,7 @@ struct AddView: View {
             
             Button("Save") {
                 Task {
-                    let newPerson = await viewModel.createNew()
+                    let newPerson = await viewModel.createNew(point: <#CLLocationCoordinate2D#>)
                     onSave(newPerson)
                     dismiss()
                 }
