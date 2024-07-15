@@ -27,7 +27,7 @@ struct DetailView: View {
                         .frame(width: UIScreen.current!.bounds.width * 0.8)
                         .padding()
                     
-                    Map() {
+                    Map(initialPosition: MapCameraPosition.region(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: person.coordinate.latitude, longitude: person.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)))) {
                         Annotation("Test", coordinate: person.coordinate) {
                             Image(systemName: "star.circle")
                                 .resizable()

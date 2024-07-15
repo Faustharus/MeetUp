@@ -130,7 +130,7 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $isOpen) {
-                    AddView(onSave: { newPerson in
+                    AddView(locationFetcher: locationFetcher, onSave: { newPerson in
                         viewModel.allPeople.append(newPerson)
                         viewModel.save()
                     })

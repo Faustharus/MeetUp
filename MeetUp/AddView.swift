@@ -18,10 +18,11 @@ struct AddView: View {
     @FocusState var isInputValid: Bool
     
     @State private var viewModel: ViewModel
-    
+    let locationFetcher: LocationFetcher
     var onSave: (Person) -> Void
     
-    init(onSave: @escaping (Person) -> Void) {
+    init(locationFetcher: LocationFetcher, onSave: @escaping (Person) -> Void) {
+        self.locationFetcher = locationFetcher
         self.onSave = onSave
         _viewModel = State(initialValue: ViewModel())
     }
@@ -74,7 +75,10 @@ struct AddView: View {
             
             Button("Save") {
                 Task {
-                    let newPerson = await viewModel.createNew(point: <#CLLocationCoordinate2D#>)
+//                    if let location = locationFetcher.lastKnownLocation {
+//                        await viewModel.addNewPerson(viewModel.name, point: location)
+//                    }
+                    let newPerson = await viewModel.createNew(location: locationFetcher.lastKnownLocation)
                     onSave(newPerson)
                     dismiss()
                 }
@@ -86,5 +90,5 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView(onSave: { _ in })
+    AddView(locationFetcher: LocationFetcher(), onSave: { _ in })
 }
