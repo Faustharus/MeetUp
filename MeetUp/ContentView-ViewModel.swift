@@ -76,6 +76,7 @@ extension ContentView {
         
         func deletePerson(at offsets: IndexSet) {
             allPeople.remove(atOffsets: offsets)
+            save()
         }
     }
 }

@@ -11,12 +11,13 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var viewModel = ViewModel()
-    
     @State private var isOpen: Bool = false
+    
+    @FocusState var isInputValid: Bool
     
     let locationFetcher = LocationFetcher()
     
-    var body: some View {
+    var body: some View { /** Change the View to switch between the ContentUnavailableView and the '+' Button in the toolbar -> By having only one ViewModel for ContentView and AddView - Removing the Extension ? */
         NavigationStack {
             if viewModel.allPeople.isEmpty {
                 VStack {
@@ -44,6 +45,24 @@ struct ContentView: View {
                                 VStack {
                                     TextField("Person's Name", text: $viewModel.name)
                                         .keyboardType(.default)
+                                        .focused($isInputValid)
+                                        .toolbar {
+                                            ToolbarItemGroup(placement: .keyboard) {
+                                                Button {
+                                                    self.isInputValid = false
+                                                } label: {
+                                                    Label("Done", systemImage: "keyboard.chevron.compact.down")
+                                                }
+                                                
+                                                Spacer()
+                                                
+                                                Button {
+                                                    self.viewModel.name = ""
+                                                } label: {
+                                                    Label("Reset", systemImage: "eraser.line.dashed")
+                                                }
+                                            }
+                                        }
                                         .padding(.horizontal)
                                 }
                             }
@@ -77,7 +96,6 @@ struct ContentView: View {
                             }
                         }
                     }
-                    //.frame(width: UIScreen.current!.bounds.width * 0.9, height: UIScreen.current!.bounds.height * 0.05)
                 }
                 .navigationTitle("MeetUp")
                 .toolbar {
@@ -89,7 +107,7 @@ struct ContentView: View {
                 }
             } else {
                 List {
-                    ForEach(viewModel.allPeople.sorted(), id: \.id) { person in
+                    ForEach(viewModel.allPeople.sorted(), id: \.name) { person in
                         NavigationLink(value: person) {
                             HStack {
                                 if let image = viewModel.imageFromData(person.picture) {
@@ -102,9 +120,10 @@ struct ContentView: View {
                                 Text("\(person.name)")
                             }
                         }
-                        
                     }
-                    .onDelete(perform: viewModel.deletePerson)
+                    .onDelete { indexSet in
+                        viewModel.deletePerson(at: indexSet)
+                    }
                 }
                 .navigationTitle("MeetUp")
                 .navigationDestination(for: Person.self, destination: { person in

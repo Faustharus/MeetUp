@@ -12,12 +12,10 @@ struct AddView: View {
  
     @Environment(\.dismiss) var dismiss
     
-    @State private var name: String = ""
-    @State private var selectedItem: PhotosPickerItem?
-    @State private var processedImage: Image?
     @FocusState var isInputValid: Bool
     
     @State private var viewModel: ViewModel
+    
     let locationFetcher: LocationFetcher
     var onSave: (Person) -> Void
     
@@ -75,9 +73,6 @@ struct AddView: View {
             
             Button("Save") {
                 Task {
-//                    if let location = locationFetcher.lastKnownLocation {
-//                        await viewModel.addNewPerson(viewModel.name, point: location)
-//                    }
                     let newPerson = await viewModel.createNew(location: locationFetcher.lastKnownLocation)
                     onSave(newPerson)
                     dismiss()
