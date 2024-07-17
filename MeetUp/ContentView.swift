@@ -17,146 +17,169 @@ struct ContentView: View {
     
     let locationFetcher = LocationFetcher()
     
-    var body: some View { /** Change the View to switch between the ContentUnavailableView and the '+' Button in the toolbar -> By having only one ViewModel for ContentView and AddView - Removing the Extension ? */
+    /** Change the View to switch between the ContentUnavailableView and the '+' Button in the toolbar -> By having only one ViewModel for ContentView and AddView - Removing the Extension ? */
+    
+    var body: some View {
         NavigationStack {
-            if viewModel.allPeople.isEmpty {
-                VStack {
-                    PhotosPicker(selection: $viewModel.selectedItem) {
-                        if let picture = viewModel.processedImage {
-                            picture
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .frame(width: 300, height: 100)
-                                .padding()
-                        } else {
-                            ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap to insert your first photo"))
-                        }
-                    }
-                    .onChange(of: viewModel.selectedItem, viewModel.loadImage)
-                    
-                    Spacer()
-                    
-                    VStack {
-                        if viewModel.processedImage != nil {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(.black, lineWidth: 2.5)
-                                VStack {
-                                    TextField("Person's Name", text: $viewModel.name)
-                                        .keyboardType(.default)
-                                        .focused($isInputValid)
-                                        .toolbar {
-                                            ToolbarItemGroup(placement: .keyboard) {
-                                                Button {
-                                                    self.isInputValid = false
-                                                } label: {
-                                                    Label("Done", systemImage: "keyboard.chevron.compact.down")
-                                                }
-                                                
-                                                Spacer()
-                                                
-                                                Button {
-                                                    self.viewModel.name = ""
-                                                } label: {
-                                                    Label("Reset", systemImage: "eraser.line.dashed")
-                                                }
-                                            }
-                                        }
-                                        .padding(.horizontal)
-                                }
-                            }
-                            .frame(width: 300, height: 55)
-                            
-                            Button {
-                                Task {
-                                    if let location = locationFetcher.lastKnownLocation {
-                                        await viewModel.addNewPerson(viewModel.name, point: location)
-                                    }
-                                }
-                            } label: {
-                                Text("Save")
-                                    .font(.title.bold())
-                                    .foregroundStyle(.white)
-                                    .frame(width: 300, height: 55)
-                                    .background(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3 ? Color.gray.gradient : Color.blue.gradient)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                            }
-                            .disabled(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3)
-                            
-                            Button {
-                                viewModel.cancelAdd()
-                            } label: {
-                                Text("Cancel")
-                                    .font(.title.bold())
-                                    .foregroundStyle(.white)
-                                    .frame(width: 300, height: 55)
-                                    .background(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3 ? Color.gray.gradient : Color.red.gradient)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                            }
-                        }
+            VStack {
+                
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        self.isOpen = true
+                    } label: {
+                        Label("Add", systemImage: "plus")
                     }
                 }
-                .navigationTitle("MeetUp")
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button("Start Tracking Location") {
-                            locationFetcher.start()
-                        }
-                    }
-                }
-            } else {
-                List {
-                    ForEach(viewModel.allPeople.sorted(), id: \.name) { person in
-                        NavigationLink(value: person) {
-                            HStack {
-                                if let image = viewModel.imageFromData(person.picture) {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 100, height: 75)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                }
-                                Text("\(person.name)")
-                            }
-                        }
-                    }
-                    .onDelete { indexSet in
-                        viewModel.deletePerson(at: indexSet)
-                    }
-                }
-                .navigationTitle("MeetUp")
-                .navigationDestination(for: Person.self, destination: { person in
-                    DetailView(person: person)
-                })
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            self.isOpen = true
-                        } label: {
-                            Label("Add", systemImage: "plus")
-                        }
-                        
-                        Spacer()
-                        
-                        Button("Start Tracking Location") {
-                            locationFetcher.start()
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .topBarLeading) {
-                        EditButton()
-                    }
-                }
-                .sheet(isPresented: $isOpen) {
-                    AddView(locationFetcher: locationFetcher, onSave: { newPerson in
-                        viewModel.allPeople.append(newPerson)
-                        viewModel.save()
-                    })
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    // TODO: Start Location Tracking
                 }
             }
         }
     }
+    
+//    var body: some View {
+//        NavigationStack {
+//            if viewModel.allPeople.isEmpty {
+//                VStack {
+//                    PhotosPicker(selection: $viewModel.selectedItem) {
+//                        if let picture = viewModel.processedImage {
+//                            picture
+//                                .resizable()
+//                                .scaledToFit()
+//                                .clipShape(RoundedRectangle(cornerRadius: 10))
+//                                .frame(width: 300, height: 100)
+//                                .padding()
+//                        } else {
+//                            ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap to insert your first photo"))
+//                        }
+//                    }
+//                    .onChange(of: viewModel.selectedItem, viewModel.loadImage)
+//                    
+//                    Spacer()
+//                    
+//                    VStack {
+//                        if viewModel.processedImage != nil {
+//                            ZStack {
+//                                RoundedRectangle(cornerRadius: 10)
+//                                    .stroke(.black, lineWidth: 2.5)
+//                                VStack {
+//                                    TextField("Person's Name", text: $viewModel.name)
+//                                        .keyboardType(.default)
+//                                        .focused($isInputValid)
+//                                        .toolbar {
+//                                            ToolbarItemGroup(placement: .keyboard) {
+//                                                Button {
+//                                                    self.isInputValid = false
+//                                                } label: {
+//                                                    Label("Done", systemImage: "keyboard.chevron.compact.down")
+//                                                }
+//                                                
+//                                                Spacer()
+//                                                
+//                                                Button {
+//                                                    self.viewModel.name = ""
+//                                                } label: {
+//                                                    Label("Reset", systemImage: "eraser.line.dashed")
+//                                                }
+//                                            }
+//                                        }
+//                                        .padding(.horizontal)
+//                                }
+//                            }
+//                            .frame(width: 300, height: 55)
+//                            
+//                            Button {
+//                                Task {
+//                                    if let location = locationFetcher.lastKnownLocation {
+//                                        await viewModel.addNewPerson(viewModel.name, point: location)
+//                                    }
+//                                }
+//                            } label: {
+//                                Text("Save")
+//                                    .font(.title.bold())
+//                                    .foregroundStyle(.white)
+//                                    .frame(width: 300, height: 55)
+//                                    .background(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3 ? Color.gray.gradient : Color.blue.gradient)
+//                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+//                            }
+//                            .disabled(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3)
+//                            
+//                            Button {
+//                                viewModel.cancelAdd()
+//                            } label: {
+//                                Text("Cancel")
+//                                    .font(.title.bold())
+//                                    .foregroundStyle(.white)
+//                                    .frame(width: 300, height: 55)
+//                                    .background(viewModel.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.name.count < 3 ? Color.gray.gradient : Color.red.gradient)
+//                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+//                            }
+//                        }
+//                    }
+//                }
+//                .navigationTitle("MeetUp")
+//                .toolbar {
+//                    ToolbarItem(placement: .topBarLeading) {
+//                        Button("Start Tracking Location") {
+//                            locationFetcher.start()
+//                        }
+//                    }
+//                }
+//            } else {
+//                List {
+//                    ForEach(viewModel.allPeople.sorted(), id: \.name) { person in
+//                        NavigationLink(value: person) {
+//                            HStack {
+//                                if let image = viewModel.imageFromData(person.picture) {
+//                                    image
+//                                        .resizable()
+//                                        .scaledToFit()
+//                                        .frame(width: 100, height: 75)
+//                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+//                                }
+//                                Text("\(person.name)")
+//                            }
+//                        }
+//                    }
+//                    .onDelete { indexSet in
+//                        viewModel.deletePerson(at: indexSet)
+//                    }
+//                }
+//                .navigationTitle("MeetUp")
+//                .navigationDestination(for: Person.self, destination: { person in
+//                    DetailView(person: person)
+//                })
+//                .toolbar {
+//                    ToolbarItem(placement: .topBarTrailing) {
+//                        Button {
+//                            self.isOpen = true
+//                        } label: {
+//                            Label("Add", systemImage: "plus")
+//                        }
+//                        
+//                        Spacer()
+//                        
+//                        Button("Start Tracking Location") {
+//                            locationFetcher.start()
+//                        }
+//                    }
+//                    
+//                    ToolbarItem(placement: .topBarLeading) {
+//                        EditButton()
+//                    }
+//                }
+//                .sheet(isPresented: $isOpen) {
+//                    AddView(locationFetcher: locationFetcher, onSave: { newPerson in
+//                        viewModel.allPeople.append(newPerson)
+//                        viewModel.save()
+//                    })
+//                }
+//            }
+//        }
+//    }
 }
 
 #Preview {
