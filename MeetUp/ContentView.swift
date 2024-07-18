@@ -10,6 +10,8 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @Environment(\.editMode) var editMode
+    
     @State private var viewModel = ViewModel()
     @State private var isOpen: Bool = false
     
@@ -22,19 +24,67 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                if viewModel.allPeople.isEmpty {
                     Button {
                         self.isOpen = true
                     } label: {
-                        Label("Add", systemImage: "plus")
+                        ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap to insert your first photo"))
+                    }
+                } else {
+//                    EmptyView()
+                    List {
+                        ForEach(viewModel.allPeople.sorted()) { person in
+                            NavigationLink(value: person) {
+                                HStack {
+                                    if let image = viewModel.imageFromData(person.picture) {
+                                        image
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 50, height: 50)
+                                    }
+                                    
+                                    Text("\(person.name)")
+                                        .font(.headline)
+                                }
+                            }
+                        }
+                        .onDelete { indexSet in
+                            if editMode?.wrappedValue == .active {
+                                viewModel.deletePerson(at: indexSet)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationDestination(for: Person.self, destination: { person in
+                DetailView(person: person)
+            })
+            .navigationTitle("MeetUp")
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button {
+                        locationFetcher.start()
+                    } label: {
+                        Label("Tracking", systemImage: "paperplane.circle.fill")
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        self.isOpen = true
+                    } label: {
+                        Label("Add", systemImage: "plus.circle.fill")
                     }
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {
-                    // TODO: Start Location Tracking
+                    EditButton()
+                }
+            }
+            .sheet(isPresented: $isOpen) {
+                AddView(locationFetcher: locationFetcher) { newPerson in
+                    viewModel.allPeople.append(newPerson)
+                    viewModel.save()
                 }
             }
         }
