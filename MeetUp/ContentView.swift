@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @Environment(\.editMode) var editMode
+    @Environment(\.editMode) private var editMode
     
     @State private var viewModel = ViewModel()
     @State private var isOpen: Bool = false
@@ -47,11 +47,16 @@ struct ContentView: View {
                                         .font(.headline)
                                 }
                             }
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { _ in } // <- Provokes a crash - Reason: Does not return the same amount of item in the list after the delete
+                            )
                         }
                         .onDelete { indexSet in
-                            if editMode?.wrappedValue == .active {
-                                viewModel.deletePerson(at: indexSet)
-                            }
+//                            if editMode?.wrappedValue == .active {
+//                                viewModel.deletePerson(at: indexSet)
+//                            }
                         }
                     }
                 }
