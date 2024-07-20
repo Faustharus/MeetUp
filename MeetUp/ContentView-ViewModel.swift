@@ -61,6 +61,9 @@ extension ContentView {
             let newPerson = Person(name: name, picture: imageData, latitude: point.latitude, longitude: point.longitude)
             allPeople.append(newPerson)
             save()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.cancelAdd()
+            }
         }
         
         func cancelAdd() {

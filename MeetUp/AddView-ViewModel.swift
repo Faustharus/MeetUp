@@ -40,5 +40,11 @@ extension AddView {
                 }
             }
         }
+        
+        func cancelAdd() {
+            selectedItem = nil
+            processedImage = nil
+            name = ""
+        }
     }
 }

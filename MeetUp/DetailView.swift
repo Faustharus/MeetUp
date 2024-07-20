@@ -19,42 +19,30 @@ struct DetailView: View {
     var body: some View {
         VStack {
             if let picture = viewModel.imageFromData(person.picture) {
-                VStack {
-                    picture
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .frame(width: UIScreen.current!.bounds.width * 0.8)
-                        .padding()
-                    
-                    Map(initialPosition: MapCameraPosition.region(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: person.coordinate.latitude, longitude: person.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)))) {
-                        Annotation("Test", coordinate: person.coordinate) {
-                            Image(systemName: "star.circle")
-                                .resizable()
-                                .foregroundStyle(.red)
-                                .scaledToFit()
-                                .frame(width: 44, height: 44)
-                                .background(.white)
-                                .clipShape(.circle)
-                        }
+                picture
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .frame(width: UIScreen.current!.bounds.width * 0.8)
+                    .padding()
+                
+                Map(initialPosition: MapCameraPosition.region(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: person.coordinate.latitude, longitude: person.coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)))) {
+                    Annotation("Test", coordinate: person.coordinate) {
+                        Image(systemName: "star.circle")
+                            .resizable()
+                            .foregroundStyle(.red)
+                            .scaledToFit()
+                            .frame(width: 44, height: 44)
+                            .background(.white)
+                            .clipShape(.circle)
                     }
                 }
             } else {
                 ContentUnavailableView("No Picture", systemImage: "photo.on.rectangle.angled", description: Text("There is no picture to match to the name"))
                     .frame(width: 400, height: 200)
             }
-               
-            Text(person.name)
-                .font(.title.bold().italic())
-            
-//            Button("Open Map") {
-//                self.isMapOpen = true
-//            }
-//            .buttonStyle(.bordered)
         }
-//        .sheet(isPresented: $isMapOpen) {
-//            MapLocationView(locationTest: person)
-//        }
+        .navigationTitle(person.name)
     }
 }
 

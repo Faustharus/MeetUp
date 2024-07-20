@@ -9,7 +9,7 @@ import MapKit
 import SwiftUI
 
 struct Person: Identifiable, Codable, Comparable, Hashable {
-    var id = UUID()
+    var id = UUID().hashValue
     var name: String
     var picture: Data?
     var latitude: Double
@@ -20,7 +20,7 @@ struct Person: Identifiable, Codable, Comparable, Hashable {
     }
     
     static func <(lhs: Person, rhs: Person) -> Bool {
-        return lhs.name < rhs.name
+       return lhs.name < rhs.name
     }
     
     #if DEBUG

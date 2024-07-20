@@ -12,9 +12,8 @@ struct AddView: View {
  
     @Environment(\.dismiss) var dismiss
     
-    @FocusState var isInputValid: Bool
-    
     @State private var viewModel: ViewModel
+    @State private var isOpen: Bool = false
     
     let locationFetcher: LocationFetcher
     var onSave: (Person) -> Void
@@ -27,60 +26,40 @@ struct AddView: View {
     
     var body: some View {
         VStack {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(.black, lineWidth: 3)
-                VStack {
+            if let picture = viewModel.processedImage {
+                picture
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .frame(width: UIScreen.current!.bounds.width * 0.9, height: UIScreen.current!.bounds.height * 0.5)
+                    .padding()
+                
+                Button("Add") {
+                    self.isOpen = true
+                }
+                .alert("Insert the Name", isPresented: $isOpen) {
                     TextField("Person's Name", text: $viewModel.name)
                         .keyboardType(.default)
-                        .focused($isInputValid)
-                        .toolbar {
-                            ToolbarItemGroup(placement: .keyboard) {
-                                Button {
-                                    self.isInputValid = false
-                                } label: {
-                                    Label("Done", systemImage: "keyboard.chevron.compact.down")
-                                }
-                                
-                                Spacer()
-                                
-                                Button {
-                                    self.viewModel.name = ""
-                                } label: {
-                                    Label("Reset", systemImage: "eraser.line.dashed")
-                                }
-                            }
+                    Button {
+                        Task {
+                            let newPerson = await viewModel.createNew(location: locationFetcher.lastKnownLocation)
+                            onSave(newPerson)
+                            dismiss()
                         }
+                    } label: {
+                        Text("Save")
+                    }
+                    Button("Cancer", role: .cancel) { viewModel.cancelAdd() }
                 }
-                .padding(.horizontal)
+            } else {
+                ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap to insert another photo"))
             }
-            .frame(width: 300, height: 55)
-            
-            PhotosPicker(selection: $viewModel.selectedItem) {
-                if let picture = viewModel.processedImage {
-                    picture
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .frame(width: 400, height: 200)
-                        .padding()
-                } else {
-                    ContentUnavailableView("Select your photo", systemImage: "photo.badge.plus", description: Text("Tap to add the person's photo"))
-                        .frame(width: 400, height: 200)
-                }
+            PhotosPicker(selection: $viewModel.selectedItem, matching: .images) {
+                Text("Another Photo")
             }
-            .onChange(of: viewModel.selectedItem, viewModel.loadImage)
-            
-            Button("Save") {
-                Task {
-                    let newPerson = await viewModel.createNew(location: locationFetcher.lastKnownLocation)
-                    onSave(newPerson)
-                    dismiss()
-                }
-                
-            }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.bordered)
         }
+        .onChange(of: viewModel.selectedItem, viewModel.loadImage)
     }
 }
 
