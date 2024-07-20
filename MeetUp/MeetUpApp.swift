@@ -15,3 +15,5 @@ struct MeetUpApp: App {
         }
     }
 }
+
+// FIXME: Delete Func does not work Properly

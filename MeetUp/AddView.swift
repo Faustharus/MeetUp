@@ -37,6 +37,7 @@ struct AddView: View {
                 Button("Add") {
                     self.isOpen = true
                 }
+                .buttonStyle(.borderedProminent)
                 .alert("Insert the Name", isPresented: $isOpen) {
                     TextField("Person's Name", text: $viewModel.name)
                         .keyboardType(.default)
@@ -49,7 +50,7 @@ struct AddView: View {
                     } label: {
                         Text("Save")
                     }
-                    Button("Cancer", role: .cancel) { viewModel.cancelAdd() }
+                    Button("Cancel", role: .cancel) { viewModel.cancelAdd() }
                 }
             } else {
                 ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap to insert another photo"))

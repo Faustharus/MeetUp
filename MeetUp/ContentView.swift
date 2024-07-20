@@ -32,6 +32,7 @@ struct ContentView: View {
                             Button("Add") {
                                 self.isItFirst = true
                             }
+                            .buttonStyle(.borderedProminent)
                             .alert("Insert the Name", isPresented: $isItFirst) {
                                 TextField("Person's Name", text: $viewModel.name)
                                     .keyboardType(.default)
@@ -44,7 +45,7 @@ struct ContentView: View {
                                 } label: {
                                     Text("Save")
                                 }
-                                Button("Cancer", role: .cancel) { viewModel.cancelAdd() }
+                                Button("Cancel", role: .cancel) { viewModel.cancelAdd() }
                             }
                         } else {
                             ContentUnavailableView("No Picture Yet", systemImage: "photo.badge.plus", description: Text("Tap \(Image(systemName: "plus.circle.fill")) to insert your first photo"))
@@ -90,6 +91,10 @@ struct ContentView: View {
                             Label("Add", systemImage: "plus.circle.fill")
                         }
                     }
+                }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    EditButton()
                 }
             }
             .sheet(isPresented: $isOpen) {
